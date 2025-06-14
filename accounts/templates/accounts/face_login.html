@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ورود با چهره</title>
+</head>
+<body>
+    <h1>لطفاً چهره‌تان را جلوی دوربین بگیرید</h1>
+    <video id="video" width="300" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <button onclick="capture()">ورود</button>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        // گرفتن دسترسی به دوربین
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+            video.srcObject = stream;
+        });
+
+        function capture() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL('image/jpeg');
+            fetch("{% url 'face_login' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: new URLSearchParams({
+                    'image': dataURL
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('ورود موفقیت‌آمیز بود');
+                    window.location.href = '/';  // یا صفحه داشبورد
+                } else {
+                    alert('ورود ناموفق: ' + (data.error || ''));
+                }
+            });
+        }
+    </script>
+</body>
+</html>
