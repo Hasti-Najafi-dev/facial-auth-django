@@ -39,7 +39,8 @@
             .then(data => {
                 if (data.status === 'success') {
                     alert('ورود موفقیت‌آمیز بود');
-                    window.location.href = '/';  // یا صفحه داشبورد
+                    window.location.href = data.redirect_url;
+            
                 } else {
                     alert('ورود ناموفق: ' + (data.error || ''));
                 }

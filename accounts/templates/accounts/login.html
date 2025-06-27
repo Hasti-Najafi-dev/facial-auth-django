@@ -9,7 +9,7 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Login</button>
+        <a href="/accounts/face-login/" >Login</a>
     </form>
 </body>
 </html>
